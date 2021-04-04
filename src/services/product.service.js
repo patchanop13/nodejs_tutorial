@@ -15,49 +15,36 @@ const products=[
 
 let count = products.length
 
-exports.findAll = products
+exports.findAll = () => products
 
 exports.findByPrice=(min,max)=>{
     const result=products.filter(product=>product.price>=min && product.price<=max)
     return result
 }
-exports.findById=(id)=>{
-    const result=products.filter(product=>product.id==id)
-    if(result.length>0){
-        return result[0]
-    }else{
-        return null
-    }
-}
+exports.findById=(id)=>products.filter(product=>product.id==id)
 
-exports.addProduct=(req,res)=>{
-    const {name,price,stock} = req.body
+exports.add=(product)=>{
     count=count+1
-    const product = new Product(count,name,"",price,stock)
-    products.push(product)
-    res.status(201).json(product)
+    const productNew = new Product(count,product.name,"",product.price,product.stock)
+    products.push(productNew)
+    return productNew
 }
 
-exports.updateProduct=(req,res)=>{
-    const id = req.params.id
-    const index = products.findIndex(product=>product.id==req.params.id)
+exports.update=(id,product)=>{
+    const index = products.findIndex(product=>product.id==id)
     if(index!==-1){
-        const {name,price,stock} = req.body
-        const product = new Product(Number(id),name,"",price,stock)
-        products[index] = product
-        res.json(product)
-    }else{
-        res.status(404).json({})
+        const productUpdated = new Product(Number(id),product.name,"",product.price,product.stock)
+        products[index] = productUpdated
+        return productUpdated
     }
+    return null
 }
 
-exports.deleteProduct=(req,res)=>{
-    const id = req.params.id
+exports.remove=(id)=>{
     const index = products.findIndex(product=>product.id==id)
     if(index!==-1){
         products.splice(index,1)
-        res.status(204).json()
-    }else{
-        res.status(404).json({})
+        return true
     }
+    return false
 }
